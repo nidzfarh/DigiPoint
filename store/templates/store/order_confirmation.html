@@ -1,0 +1,73 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Order Confirmation - DigiPoint{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-5 text-center">
+                <div style="font-size: 3rem; color: var(--success-color); margin-bottom: 1rem;">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <h2 class="mb-2">Thank You for Your Order!</h2>
+                <p class="text-muted-custom mb-4">Your order has been placed successfully and is being processed.</p>
+                
+                <div class="alert alert-info mb-4">
+                    <h5 class="mb-2"><i class="bi bi-receipt"></i> Order Details</h5>
+                    <p class="mb-1"><strong>Order Number:</strong> #{{ order.id }}</p>
+                    <p class="mb-1"><strong>Order Date:</strong> {{ order.created_at|date:"F j, Y \a\t H:i" }}</p>
+                    <p class="mb-0"><strong>Order Total:</strong> <span class="text-primary" style="font-size: 1.2rem;">₹{{ order.total_amount|floatformat:2 }}</span></p>
+                </div>
+                
+                <div class="card mb-4 border-0 bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Shipping Address</h5>
+                        <p class="mb-1">{{ order.shipping_address }}</p>
+                        <p class="mb-1">{{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}</p>
+                        <p class="mb-0">{{ order.shipping_country }}</p>
+                    </div>
+                </div>
+                
+                <div class="card mb-4 border-0">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Items Ordered</h5>
+                        <div class="list-group list-group-flush">
+                            {% for item in order_items %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-3">
+                                    <div class="text-start">
+                                        <h6 class="mb-1">{{ item.product.name }}</h6>
+                                        <small class="text-muted-custom">Qty: {{ item.quantity }} x ₹{{ item.price|floatformat:2 }}</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <strong>₹{{ item.get_total_price|floatformat:2 }}</strong>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="alert alert-light mb-4" style="border: 1px solid #ddd;">
+                    <p class="mb-2"><strong>What's Next?</strong></p>
+                    <ul class="mb-0 text-start">
+                        <li>You will receive an order confirmation email shortly</li>
+                        <li>Your order will be processed and shipped within 2-3 business days</li>
+                        <li>You can track your order in your account</li>
+                        <li>Free returns within 30 days if you're not satisfied</li>
+                    </ul>
+                </div>
+                
+                <div class="d-flex gap-2">
+                    <a href="{% url 'store:order_detail' order.id %}" class="btn btn-primary flex-grow-1">
+                        <i class="bi bi-eye"></i> View Order Details
+                    </a>
+                    <a href="{% url 'store:products_list' %}" class="btn btn-outline-secondary flex-grow-1">
+                        <i class="bi bi-shop"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

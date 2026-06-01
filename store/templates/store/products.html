@@ -1,0 +1,70 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Products - DigiPoint{% endblock %}
+
+{% block content %}
+<h1 class="section-title mb-4"><i class="bi bi-collection"></i> Our Products</h1>
+
+<!-- Search and Filter -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <form method="get" class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="Search products..." value="{{ search_query }}">
+            <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Search</button>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <form method="get" class="d-flex gap-2">
+            <select name="category" class="form-select">
+                <option value="">All Categories</option>
+                <option value="keyboard" {% if selected_category == 'keyboard' %}selected{% endif %}>Keyboard</option>
+                <option value="mouse" {% if selected_category == 'mouse' %}selected{% endif %}>Mouse</option>
+                <option value="headphone" {% if selected_category == 'headphone' %}selected{% endif %}>Headphone</option>
+                <option value="ssd" {% if selected_category == 'ssd' %}selected{% endif %}>SSD</option>
+                <option value="router" {% if selected_category == 'router' %}selected{% endif %}>Router</option>
+                <option value="webcam" {% if selected_category == 'webcam' %}selected{% endif %}>Webcam</option>
+                <option value="monitor" {% if selected_category == 'monitor' %}selected{% endif %}>Monitor</option>
+            </select>
+            <button class="btn btn-secondary" type="submit"><i class="bi bi-funnel"></i> Filter</button>
+        </form>
+    </div>
+</div>
+
+<!-- Products Grid -->
+<div class="row">
+    {% for product in products %}
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card product-card">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: #e0e0e0;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #999;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body product-body d-flex flex-column">
+                    <h5 class="card-title product-title">{{ product.name }}</h5>
+                    <p class="card-text text-muted-custom">{{ product.brand }}</p>
+                    <p class="product-price">₹{{ product.price|floatformat:2 }}</p>
+                    {% if product.is_in_stock %}
+                        <span class="stock-badge in-stock mb-3"><i class="bi bi-check-circle"></i> {{ product.stock }} In Stock</span>
+                    {% else %}
+                        <span class="stock-badge out-of-stock mb-3"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                    {% endif %}
+                    <a href="{% url 'store:product_detail' product.id %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-inbox"></i> No products found. Try adjusting your search or filters.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

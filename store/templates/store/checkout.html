@@ -1,0 +1,123 @@
+{% extends 'store/base.html' %}
+
+{% block title %}Checkout - DigiPoint{% endblock %}
+
+{% block content %}
+<h1 class="section-title mb-4"><i class="bi bi-credit-card"></i> Checkout</h1>
+
+<div class="row">
+    <!-- Shipping Form -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="card-title mb-4">Shipping Address</h5>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="shipping_address" class="form-label">Street Address</label>
+                        {{ form.shipping_address }}
+                        {% if form.shipping_address.errors %}
+                            <small class="text-danger">{{ form.shipping_address.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="shipping_city" class="form-label">City</label>
+                            {{ form.shipping_city }}
+                            {% if form.shipping_city.errors %}
+                                <small class="text-danger">{{ form.shipping_city.errors.0 }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="shipping_state" class="form-label">State/Province</label>
+                            {{ form.shipping_state }}
+                            {% if form.shipping_state.errors %}
+                                <small class="text-danger">{{ form.shipping_state.errors.0 }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="shipping_postal_code" class="form-label">Postal Code</label>
+                            {{ form.shipping_postal_code }}
+                            {% if form.shipping_postal_code.errors %}
+                                <small class="text-danger">{{ form.shipping_postal_code.errors.0 }}</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="shipping_country" class="form-label">Country</label>
+                            {{ form.shipping_country }}
+                            {% if form.shipping_country.errors %}
+                                <small class="text-danger">{{ form.shipping_country.errors.0 }}</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <small class="text-danger">{{ form.phone_number.errors.0 }}</small>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                            <i class="bi bi-check-circle"></i> Place Order
+                        </button>
+                        <a href="{% url 'store:cart' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-arrow-left"></i> Back to Cart
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Order Summary -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3"><i class="bi bi-receipt"></i> Order Items</h5>
+                
+                <div class="list-group list-group-flush mb-3">
+                    {% for item in cart_items %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center px-0 py-2">
+                            <div>
+                                <h6 class="mb-1">{{ item.product.name }}</h6>
+                                <small class="text-muted-custom">Qty: {{ item.quantity }}</small>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold">₹{{ item.get_total_price|floatformat:2 }}</div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="border-top pt-3">
+                    <div class="row mb-2">
+                        <div class="col-6">Subtotal:</div>
+                        <div class="col-6 text-end">₹{{ total_price|floatformat:2 }}</div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-6">Shipping:</div>
+                        <div class="col-6 text-end text-success">FREE</div>
+                    </div>
+                    <div class="row mb-3 pb-3 border-bottom">
+                        <div class="col-6">Tax:</div>
+                        <div class="col-6 text-end">₹{{ total_price|floatformat:2 }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><h6 class="mb-0">Total:</h6></div>
+                        <div class="col-6 text-end"><h6 class="mb-0 text-primary">₹{{ total_price|floatformat:2 }}</h6></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,135 @@
+{% extends 'store/base.html' %}
+
+{% block title %}{{ product.name }} - DigiPoint{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'store:home' %}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'store:products_list' %}">Products</a></li>
+        <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <!-- Product Image -->
+    <div class="col-md-6 mb-4">
+        <div class="card border-0">
+            <div style="height: 400px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                {% else %}
+                    <i class="bi bi-image" style="font-size: 5rem; color: #ccc;"></i>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Product Info -->
+    <div class="col-md-6">
+        <h1 class="mb-3">{{ product.name }}</h1>
+        
+        <div class="mb-3">
+            <span class="badge bg-primary">{{ product.get_category_display }}</span>
+            <span class="badge bg-secondary">{{ product.brand }}</span>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <h4 class="product-price">₹{{ product.price|floatformat:2 }}</h4>
+            </div>
+            <div class="col-md-6 text-end">
+                {% if product.is_in_stock %}
+                    <span class="stock-badge in-stock"><i class="bi bi-check-circle"></i> {{ product.stock }} In Stock</span>
+                {% else %}
+                    <span class="stock-badge out-of-stock"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <h5>Description</h5>
+        <p class="text-muted-custom">{{ product.description }}</p>
+        
+        <div class="divider"></div>
+        
+        {% if product.is_in_stock %}
+            {% if user.is_authenticated %}
+                <form method="post" action="{% url 'store:add_to_cart' product.id %}" class="mb-4">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="quantity" class="form-label">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" class="form-control" value="1" min="1" max="{{ product.stock }}">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                </form>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> <a href="{% url 'store:login' %}">Login</a> to add items to cart.
+                </div>
+            {% endif %}
+        {% else %}
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-circle"></i> This product is currently out of stock.
+            </div>
+        {% endif %}
+        
+        <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-4 text-center">
+                <i class="bi bi-truck" style="font-size: 2rem; color: var(--secondary-color);"></i>
+                <p class="mt-2 text-muted-custom">Free Shipping on orders over ₹50</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-shield-check" style="font-size: 2rem; color: var(--secondary-color);"></i>
+                <p class="mt-2 text-muted-custom">2-Year Warranty</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <i class="bi bi-arrow-counterclockwise" style="font-size: 2rem; color: var(--secondary-color);"></i>
+                <p class="mt-2 text-muted-custom">30-Day Returns</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related Products -->
+{% if related_products %}
+<div class="divider"></div>
+
+<h3 class="section-title"><i class="bi bi-link-45deg"></i> Related Products</h3>
+<div class="row">
+    {% for related in related_products %}
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card product-card">
+                <div class="product-image">
+                    {% if related.image %}
+                        <img src="{{ related.image.url }}" alt="{{ related.name }}">
+                    {% else %}
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: #e0e0e0;">
+                            <i class="bi bi-image" style="font-size: 3rem; color: #999;"></i>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-body product-body d-flex flex-column">
+                    <h5 class="card-title product-title">{{ related.name }}</h5>
+                    <p class="card-text text-muted-custom">{{ related.brand }}</p>
+                    <p class="product-price">₹{{ related.price }}</p>
+                    {% if related.is_in_stock %}
+                        <span class="stock-badge in-stock mb-3"><i class="bi bi-check-circle"></i> In Stock</span>
+                    {% else %}
+                        <span class="stock-badge out-of-stock mb-3"><i class="bi bi-x-circle"></i> Out of Stock</span>
+                    {% endif %}
+                    <a href="{% url 'store:product_detail' related.id %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
