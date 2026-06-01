@@ -4,7 +4,6 @@ from django.core.validators import MinValueValidator
 
 
 class Product(models.Model):
-    """Product model for e-commerce items."""
     CATEGORY_CHOICES = (
         ('keyboard', 'Keyboard'),
         ('mouse', 'Mouse'),
@@ -39,7 +38,6 @@ class Product(models.Model):
 
 
 class Cart(models.Model):
-    """Shopping cart for each user."""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -48,16 +46,13 @@ class Cart(models.Model):
         return f"Cart for {self.user.username}"
     
     def get_total_price(self):
-        """Calculate total price of all items in cart."""
         return sum(item.get_total_price() for item in self.items.all())
     
     def get_total_items(self):
-        """Get total number of items in cart."""
         return sum(item.quantity for item in self.items.all())
 
 
 class CartItem(models.Model):
-    """Individual items in a shopping cart."""
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1, validators=[MinValueValidator(1)])
@@ -75,7 +70,6 @@ class CartItem(models.Model):
 
 
 class Order(models.Model):
-    """Order model for customer purchases."""
     STATUS_CHOICES = (
         ('pending', 'Pending'),
         ('processing', 'Processing'),
@@ -113,7 +107,6 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    """Individual items in an order."""
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
@@ -123,5 +116,4 @@ class OrderItem(models.Model):
         return f"{self.product.name} in Order #{self.order.id}"
     
     def get_total_price(self):
-        """Get total price for this line item."""
         return self.price * self.quantity

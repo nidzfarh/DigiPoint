@@ -16,8 +16,7 @@ from .forms import (
 )
 
 
-# ============ Authentication Views ============
-
+# auth
 def register_view(request):
     """User registration view."""
     if request.user.is_authenticated:
@@ -48,7 +47,6 @@ def register_view(request):
 
 
 def login_view(request):
-    """User login view."""
     if request.user.is_authenticated:
         return redirect('store:home')
     
@@ -69,14 +67,12 @@ def login_view(request):
 
 
 def logout_view(request):
-    """User logout view."""
     logout(request)
     messages.success(request, 'You have been logged out successfully.')
     return redirect('store:home')
 
 
-# ============ Product Views ============
-
+#product
 def home_view(request):
     """Home page with featured products."""
     products = Product.objects.filter(is_active=True).order_by('-created_at')[:8]
@@ -94,18 +90,13 @@ def home_view(request):
 
 
 def products_list_view(request):
-    """Products listing page with search and filter."""
     products = Product.objects.filter(is_active=True)
     form = ProductSearchForm(request.GET or None)
     
     # Search functionality
     search_query = request.GET.get('search', '')
     if search_query:
-        products = products.filter(
-            Q(name__icontains=search_query) |
-            Q(description__icontains=search_query) |
-            Q(brand__icontains=search_query)
-        )
+        products = products.filter(Q(name__icontains=search_query) |Q(description__icontains=search_query) |Q(brand__icontains=search_query))
     
     # Category filter
     category = request.GET.get('category', '')
@@ -117,17 +108,11 @@ def products_list_view(request):
     if sort_by in ['-created_at', 'price', '-price', 'name']:
         products = products.order_by(sort_by)
     
-    context = {
-        'products': products,
-        'form': form,
-        'search_query': search_query,
-        'selected_category': category,
-    }
+    context = {'products': products,'form': form,'search_query': search_query,'selected_category': category,}
     return render(request, 'store/products.html', context)
 
 
 def product_detail_view(request, pk):
-    """Detailed product view."""
     product = get_object_or_404(Product, pk=pk, is_active=True)
     related_products = Product.objects.filter(
         category=product.category,
@@ -141,17 +126,14 @@ def product_detail_view(request, pk):
     return render(request, 'store/product_detail.html', context)
 
 
-# ============ Cart Views ============
-
+#cart
 def get_or_create_cart(user):
-    """Get or create cart for user."""
     cart, created = Cart.objects.get_or_create(user=user)
     return cart
 
 
 @login_required(login_url='store:login')
 def cart_view(request):
-    """Shopping cart page."""
     cart = get_or_create_cart(request.user)
     cart_items = cart.items.all()
     
@@ -166,7 +148,6 @@ def cart_view(request):
 
 @login_required(login_url='store:login')
 def add_to_cart_view(request, product_id):
-    """Add product to cart."""
     if request.method != 'POST':
         return redirect('store:product_detail', pk=product_id)
     
@@ -186,11 +167,7 @@ def add_to_cart_view(request, product_id):
         messages.error(request, f'Only {product.stock} items available in stock.')
         return redirect('store:product_detail', pk=product_id)
     
-    cart_item, created = CartItem.objects.get_or_create(
-        cart=cart,
-        product=product,
-        defaults={'quantity': quantity}
-    )
+    cart_item, created = CartItem.objects.get_or_create(cart=cart,product=product,defaults={'quantity': quantity})
     
     if not created:
         new_quantity = cart_item.quantity + quantity
@@ -208,7 +185,6 @@ def add_to_cart_view(request, product_id):
 
 @login_required(login_url='store:login')
 def remove_from_cart_view(request, item_id):
-    """Remove item from cart."""
     cart_item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
     product_name = cart_item.product.name
     cart_item.delete()
@@ -218,7 +194,6 @@ def remove_from_cart_view(request, item_id):
 
 @login_required(login_url='store:login')
 def update_cart_item_view(request, item_id):
-    """Update cart item quantity."""
     cart_item = get_object_or_404(CartItem, pk=item_id, cart__user=request.user)
     
     if request.method == 'POST':
@@ -234,13 +209,9 @@ def update_cart_item_view(request, item_id):
                 messages.success(request, f'Updated quantity.')
     
     return redirect('store:cart')
-
-
-# ============ Checkout & Order Views ============
-
+# checkout
 @login_required(login_url='store:login')
 def checkout_view(request):
-    """Checkout page."""
     cart = get_or_create_cart(request.user)
     cart_items = cart.items.all()
     
@@ -288,7 +259,6 @@ def checkout_view(request):
 
 @login_required(login_url='store:login')
 def order_confirmation_view(request, pk):
-    """Order confirmation page."""
     order = get_object_or_404(Order, pk=pk, user=request.user)
     order_items = order.items.all()
     
@@ -301,7 +271,6 @@ def order_confirmation_view(request, pk):
 
 @login_required(login_url='store:login')
 def order_history_view(request):
-    """User order history."""
     orders = request.user.orders.all()
     
     context = {
@@ -312,22 +281,16 @@ def order_history_view(request):
 
 @login_required(login_url='store:login')
 def order_detail_view(request, pk):
-    """Order detail view."""
     order = get_object_or_404(Order, pk=pk, user=request.user)
     order_items = order.items.all()
     
-    context = {
-        'order': order,
-        'order_items': order_items,
-    }
+    context = {'order': order,'order_items': order_items,}
     return render(request, 'store/order_detail.html', context)
 
 
-# ============ Admin Views ============
-
+#admin views
 @login_required(login_url='store:login')
 def admin_dashboard_view(request):
-    """Admin dashboard."""
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
         return redirect('store:home')
@@ -344,7 +307,6 @@ def admin_dashboard_view(request):
 
 @login_required(login_url='store:login')
 def admin_products_view(request):
-    """Admin products management."""
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
         return redirect('store:home')
@@ -359,26 +321,19 @@ def admin_products_view(request):
 
 @login_required(login_url='store:login')
 def admin_orders_view(request):
-    """Admin orders management."""
     if not request.user.is_staff:
         messages.error(request, 'You do not have permission to access this page.')
         return redirect('store:home')
     
     orders = Order.objects.all()
     
-    context = {
-        'orders': orders,
-    }
+    context = {'orders': orders,}
     return render(request, 'store/admin/orders.html', context)
 
-
-# ============ Utility Views ============
-
+# util
 def about_view(request):
-    """About page."""
     return render(request, 'store/about.html')
 
 
 def contact_view(request):
-    """Contact page."""
     return render(request, 'store/contact.html')

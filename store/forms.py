@@ -13,10 +13,8 @@ def validate_indian_pincode(value):
 
 def validate_indian_phone(value):
     """Validate Indian phone number format (+91 prefix optional, 10 digits)."""
-    # Remove common separators
     phone = value.replace('-', '').replace(' ', '').replace('+', '')
     
-    # Check if it starts with 91 (country code) and has 12 digits total, or just 10 digits
     if phone.startswith('91'):
         if len(phone) != 12 or not phone.isdigit():
             raise ValidationError('Phone number must be in format: +91-9876543210 or 9876543210')
