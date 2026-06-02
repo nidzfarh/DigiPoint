@@ -1,5 +1,5 @@
 {% extends 'store/base.html' %}
-
+{% load static %}
 {% block title %}{{ product.name }} - DigiPoint{% endblock %}
 
 {% block content %}
@@ -17,7 +17,7 @@
         <div class="card border-0">
             <div style="height: 400px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; border-radius: 8px;">
                 {% if product.image %}
-                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <img src="{% static 'images/products/' %}{{ product.image.name|cut:'products/' }}" alt="{{ product.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
                 {% else %}
                     <i class="bi bi-image" style="font-size: 5rem; color: #ccc;"></i>
                 {% endif %}
@@ -107,7 +107,7 @@
             <div class="card product-card">
                 <div class="product-image">
                     {% if related.image %}
-                        <img src="{{ related.image.url }}" alt="{{ related.name }}">
+                        <img src="{% static 'images/products/' %}{{ related.image.name|cut:'products/' }}" alt="{{ related.name }}">
                     {% else %}
                         <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background-color: #e0e0e0;">
                             <i class="bi bi-image" style="font-size: 3rem; color: #999;"></i>

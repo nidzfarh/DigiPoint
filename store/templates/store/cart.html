@@ -1,5 +1,5 @@
 {% extends 'store/base.html' %}
-
+{% load static %}
 {% block title %}Shopping Cart - DigiPoint{% endblock %}
 
 {% block content %}
@@ -26,7 +26,7 @@
                                     <div class="d-flex align-items-center">
                                         <div style="width: 60px; height: 60px; background-color: #e0e0e0; margin-right: 1rem; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
                                             {% if item.product.image %}
-                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                                <img src="{% static 'images/products/' %}{{ item.product.image.name|cut:'products/' }}" alt="{{ item.product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
                                             {% else %}
                                                 <i class="bi bi-image" style="color: #999;"></i>
                                             {% endif %}
