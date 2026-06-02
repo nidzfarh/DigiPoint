@@ -4,6 +4,8 @@ from .models import Product, Cart, CartItem, Order, OrderItem
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
+    exclude = ('image',)
+
     list_display = ('name', 'category', 'price', 'stock', 'brand', 'is_active', 'created_at')
     list_filter = ('category', 'is_active', 'created_at')
     search_fields = ('name', 'brand', 'description')
@@ -20,7 +22,6 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('is_active', 'created_at', 'updated_at')
         }),
     )
-
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
