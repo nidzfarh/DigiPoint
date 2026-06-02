@@ -8,15 +8,13 @@ class ProductAdmin(admin.ModelAdmin):
     list_filter = ('category', 'is_active', 'created_at')
     search_fields = ('name', 'brand', 'description')
     readonly_fields = ('created_at', 'updated_at')
+
     fieldsets = (
         ('Product Information', {
             'fields': ('name', 'brand', 'category', 'description')
         }),
         ('Pricing & Inventory', {
             'fields': ('price', 'stock')
-        }),
-        ('Media', {
-            'fields': ('image',)
         }),
         ('Status', {
             'fields': ('is_active', 'created_at', 'updated_at')
