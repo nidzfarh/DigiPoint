@@ -29,12 +29,12 @@ urlpatterns = [
     path('order/<int:pk>/confirmation/', views.order_confirmation_view, name='order_confirmation'),
     path('orders/', views.order_history_view, name='order_history'),
     path('orders/<int:pk>/', views.order_detail_view, name='order_detail'),
-    
+    path('dashboard/users/', views.admin_users_view, name='admin_users'),
     # Admin
     path('dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
     path('dashboard/products/', views.admin_products_view, name='admin_products'),
     path('dashboard/orders/', views.admin_orders_view, name='admin_orders'),
-
+    path('dashboard/orders/<int:pk>/',views.admin_order_detail_view,name='admin_order_detail'),
     path('dashboard/products/add/', views.add_product_view, name='add_product'),
     path('dashboard/products/<int:pk>/edit/', views.edit_product_view, name='edit_product'),
     path('dashboard/products/<int:pk>/delete/', views.delete_product_view, name='delete_product'),

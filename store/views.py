@@ -15,7 +15,6 @@ from .forms import (
     ProductSearchForm, CartQuantityForm
 )
 
-
 # auth
 def register_view(request):
     """User registration view."""
@@ -256,6 +255,16 @@ def checkout_view(request):
     }
     return render(request, 'store/checkout.html', context)
 
+@login_required(login_url='store:login')
+def admin_users_view(request):
+    if not request.user.is_staff:
+        return redirect('store:home')
+
+    users = User.objects.all().order_by('-date_joined')
+
+    return render(request, 'store/admin/users.html', {
+        'users': users
+    })
 
 @login_required(login_url='store:login')
 def order_confirmation_view(request, pk):
@@ -392,3 +401,12 @@ def about_view(request):
 
 def contact_view(request):
     return render(request, 'store/contact.html')
+
+@login_required(login_url='store:login')
+def admin_order_detail_view(request, pk):
+    if not request.user.is_staff:
+        return redirect('store:home')
+
+    order = get_object_or_404(Order, pk=pk)
+    context = {'order': order,'order_items': order.items.all(),}
+    return render(request,'store/admin/order_detail.html',context)

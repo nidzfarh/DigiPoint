@@ -43,7 +43,7 @@
                                 <td>{{ order.get_total_items }}</td>
                                 <td>₹{{ order.total_amount|floatformat:2 }}</td>
                                 <td>
-                                    <a href="{% url 'admin:store_order_change' order.id %}" class="btn btn-sm btn-info">
+                                    <a href="{% url 'store:admin_order_detail' order.id %}" class="btn btn-sm btn-info">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </td>
