@@ -6,22 +6,33 @@ from .models import Product, Cart, CartItem, Order, OrderItem
 class ProductAdmin(admin.ModelAdmin):
     exclude = ('image',)
 
-    list_display = ('name', 'category', 'price', 'stock', 'brand', 'is_active', 'created_at')
-    list_filter = ('category', 'is_active', 'created_at')
-    search_fields = ('name', 'brand', 'description')
-    readonly_fields = ('created_at', 'updated_at')
-
-    fieldsets = (
-        ('Product Information', {
-            'fields': ('name', 'brand', 'category', 'description')
-        }),
-        ('Pricing & Inventory', {
-            'fields': ('price', 'stock')
-        }),
-        ('Status', {
-            'fields': ('is_active', 'created_at', 'updated_at')
-        }),
+    list_display = (
+        'name',
+        'category',
+        'price',
+        'stock',
+        'brand',
+        'is_active',
+        'created_at'
     )
+
+    list_filter = (
+        'category',
+        'is_active',
+        'created_at'
+    )
+
+    search_fields = (
+        'name',
+        'brand',
+        'description'
+    )
+
+    readonly_fields = (
+        'created_at',
+        'updated_at'
+    )
+
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
@@ -50,22 +61,6 @@ class OrderAdmin(admin.ModelAdmin):
     search_fields = ('user__username', 'user__email', 'shipping_address')
     readonly_fields = ('created_at', 'updated_at', 'total_amount')
     inlines = [OrderItemInline]
-    fieldsets = (
-        ('Order Information', {
-            'fields': ('user', 'status', 'total_amount')
-        }),
-        ('Shipping Address', {
-            'fields': ('shipping_address', 'shipping_city', 'shipping_state', 
-                      'shipping_postal_code', 'shipping_country')
-        }),
-        ('Contact Information', {
-            'fields': ('phone_number',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
 
 
 @admin.register(OrderItem)
