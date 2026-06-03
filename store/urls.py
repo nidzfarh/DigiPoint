@@ -31,7 +31,11 @@ urlpatterns = [
     path('orders/<int:pk>/', views.order_detail_view, name='order_detail'),
     
     # Admin
-path('dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
-path('dashboard/products/', views.admin_products_view, name='admin_products'),
-path('dashboard/orders/', views.admin_orders_view, name='admin_orders'),
+    path('dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    path('dashboard/products/', views.admin_products_view, name='admin_products'),
+    path('dashboard/orders/', views.admin_orders_view, name='admin_orders'),
+
+    path('dashboard/products/add/', views.add_product_view, name='add_product'),
+    path('dashboard/products/<int:pk>/edit/', views.edit_product_view, name='edit_product'),
+    path('dashboard/products/<int:pk>/delete/', views.delete_product_view, name='delete_product'),
 ]

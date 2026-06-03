@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from decimal import Decimal
 from django.contrib.auth.models import User
 from .models import Order
-
+from .forms import ProductForm
 from .models import Product, Cart, CartItem, Order, OrderItem
 from .forms import (
     CustomUserCreationForm, CustomAuthenticationForm, OrderForm,
@@ -317,7 +317,62 @@ def admin_products_view(request):
         'products': products,
     }
     return render(request, 'store/admin/products.html', context)
+@login_required(login_url='store:login')
+def add_product_view(request):
+    if not request.user.is_staff:
+        return redirect('store:home')
 
+    if request.method == 'POST':
+        form = ProductForm(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product added successfully.')
+            return redirect('store:admin_products')
+    else:
+        form = ProductForm()
+
+    return render(request, 'store/admin/product_form.html', {
+        'form': form,
+        'title': 'Add Product'
+    })
+
+
+@login_required(login_url='store:login')
+def edit_product_view(request, pk):
+    if not request.user.is_staff:
+        return redirect('store:home')
+
+    product = get_object_or_404(Product, pk=pk)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, instance=product)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Product updated successfully.')
+            return redirect('store:admin_products')
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, 'store/admin/product_form.html', {
+        'form': form,
+        'title': 'Edit Product'
+    })
+
+
+@login_required(login_url='store:login')
+def delete_product_view(request, pk):
+    if not request.user.is_staff:
+        return redirect('store:home')
+
+    product = get_object_or_404(Product, pk=pk)
+
+    product.delete()
+
+    messages.success(request, 'Product deleted successfully.')
+
+    return redirect('store:admin_products')
 
 @login_required(login_url='store:login')
 def admin_orders_view(request):

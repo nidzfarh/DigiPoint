@@ -154,7 +154,10 @@ class ProductSearchForm(forms.Form):
             'class': 'form-select'
         })
     )
-
+class ProductForm(forms.ModelForm):
+    class Meta:
+        model = Product
+        exclude = ('image',)
 
 class CartQuantityForm(forms.Form):
     """Form for updating cart item quantity."""
